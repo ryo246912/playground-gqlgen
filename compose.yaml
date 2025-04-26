@@ -1,0 +1,25 @@
+name: playground-gqlgen
+services:
+  db:
+    image: mysql:8.4
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_USER: ${ROOTUSER}
+      MYSQL_ROOT_PASSWORD: ${ROOTPASS}
+      MYSQL_DATABASE: ${DATABASE}
+      MYSQL_USER: ${USERNAME}
+      MYSQL_PASSWORD: ${USERPASS}
+      TZ: 'Asia/Tokyo'
+    ports:
+      - 3306:3306
+    volumes:
+      # https://github.com/docker-library/docs/tree/master/mysql#initializing-a-fresh-instance
+      # /var/lib/mysqlのファイル有無でコマンド実行判定
+      - ./sql/sakila-db:/docker-entrypoint-initdb.d
+      - db-volume:/var/lib/mysql
+
+volumes:
+  db-volume:
+
