@@ -9,12 +9,6 @@ type Todo {
   user: User!
 }
 
-type Film {
-  id: ID!
-  title: String!
-  release_year: Int!
-}
-
 type User {
   id: ID!
   name: String!
@@ -22,7 +16,6 @@ type User {
 
 type Query {
   todos: [Todo!]!
-  films: [Film!]!
 }
 
 input NewTodo {

@@ -2,12 +2,6 @@
 
 package model
 
-type Film struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	ReleaseYaer int32  `json:"release_yaer"`
-}
-
 type Mutation struct {
 }
 
