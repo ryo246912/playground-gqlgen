@@ -15,6 +15,23 @@ import (
 	"github.com/ryo246912/playground-gqlgen/graph/models"
 )
 
+// Store is the resolver for the store field.
+func (r *customerResolver) Store(ctx context.Context, obj *model.Customer) (*model.Store, error) {
+	var store models.Store
+
+	err := r.DB.NewSelect().Model(&store).Where("store_id = ?", obj.StoreID).Scan(ctx)
+	if err != nil {
+		fmt.Print("error!", err)
+		return nil, err
+	}
+
+	return &model.Store{
+		ID:         string(store.StoreID),
+		LastUpdate: store.LastUpdate,
+	}, nil
+
+}
+
 // CreateTodo is the resolver for the createTodo field.
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
 	randNumber, _ := rand.Int(rand.Reader, big.NewInt(100))
@@ -53,13 +70,10 @@ func (r *queryResolver) Customers(ctx context.Context) ([]*model.Customer, error
 	res := make([]*model.Customer, len(customers))
 	for i, c := range customers {
 		res[i] = &model.Customer{
-			ID:        string(c.CustomerID),
+			ID:        fmt.Sprint(c.CustomerID),
 			FirstName: c.FirstName,
 			LastName:  c.LastName,
-			Store: &model.Store{
-				ID:         string(c.StoreID),
-				LastUpdate: c.LastUpdate.Time,
-			},
+			StoreID:   fmt.Sprint(c.StoreID),
 		}
 	}
 
@@ -72,6 +86,9 @@ func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, 
 	return &model.User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
 }
 
+// Customer returns CustomerResolver implementation.
+func (r *Resolver) Customer() CustomerResolver { return &customerResolver{r} }
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
@@ -81,6 +98,7 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // Todo returns TodoResolver implementation.
 func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
 
+type customerResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type todoResolver struct{ *Resolver }

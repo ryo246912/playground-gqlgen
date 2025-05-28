@@ -163,3 +163,7 @@ models:
     fields:
       user:
         resolver: true
+  Customer:
+    fields:
+      store:
+        resolver: true

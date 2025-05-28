@@ -6,13 +6,6 @@ import (
 	"time"
 )
 
-type Customer struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Store     *Store `json:"store,omitempty"`
-}
-
 type Mutation struct {
 }
 
