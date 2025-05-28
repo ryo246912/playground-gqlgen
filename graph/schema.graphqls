@@ -11,9 +11,19 @@ type Customer {
   store: Store
 }
 
+type Address {
+  ID: String!
+  address: String!
+  address2: String
+  District: String
+  CityID: Int!
+  PostalCode: String
+  lastUpdate: DateTime!
+}
 type Store {
   id: ID!
   lastUpdate: DateTime!
+  address: Address
 }
 
 type Todo {

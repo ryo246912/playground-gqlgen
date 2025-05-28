@@ -21,15 +21,15 @@ func (r *customerResolver) Store(ctx context.Context, obj *model.Customer) (*mod
 
 	err := r.DB.NewSelect().Model(&store).Where("store_id = ?", obj.StoreID).Scan(ctx)
 	if err != nil {
-		fmt.Print("error!", err)
+		log.Print("error!", err)
 		return nil, err
 	}
 
 	return &model.Store{
-		ID:         string(store.StoreID),
+		ID:         fmt.Sprint(store.StoreID),
 		LastUpdate: store.LastUpdate,
+		AddressID:  fmt.Sprint(store.AddressID),
 	}, nil
-
 }
 
 // CreateTodo is the resolver for the createTodo field.
@@ -80,6 +80,27 @@ func (r *queryResolver) Customers(ctx context.Context) ([]*model.Customer, error
 	return res, nil
 }
 
+// Address is the resolver for the address field.
+func (r *storeResolver) Address(ctx context.Context, obj *model.Store) (*model.Address, error) {
+	var address models.Address
+
+	err := r.DB.NewSelect().Model(&address).Where("address_id = ?", obj.AddressID).Scan(ctx)
+	if err != nil {
+		log.Println("error!", err)
+		return nil, err
+	}
+
+	return &model.Address{
+		ID:         fmt.Sprint(address.AddressID),
+		Address:    address.Address,
+		Address2:   nullStringToPtr(address.Address2),
+		District:   stringToPtr(address.District),
+		CityID:     int32(address.CityID),
+		PostalCode: nullStringToPtr(address.PostalCode),
+		LastUpdate: address.LastUpdate,
+	}, nil
+}
+
 // User is the resolver for the user field.
 // Note:resolver:trueにしたことで新たに生成された関数
 func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
@@ -95,10 +116,14 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Store returns StoreResolver implementation.
+func (r *Resolver) Store() StoreResolver { return &storeResolver{r} }
+
 // Todo returns TodoResolver implementation.
 func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
 
 type customerResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type storeResolver struct{ *Resolver }
 type todoResolver struct{ *Resolver }

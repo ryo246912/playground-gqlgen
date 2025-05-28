@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+type Address struct {
+	ID         string    `json:"ID"`
+	Address    string    `json:"address"`
+	Address2   *string   `json:"address2,omitempty"`
+	District   *string   `json:"District,omitempty"`
+	CityID     int32     `json:"CityID"`
+	PostalCode *string   `json:"PostalCode,omitempty"`
+	LastUpdate time.Time `json:"lastUpdate"`
+}
+
 type Mutation struct {
 }
 
@@ -15,11 +25,6 @@ type NewTodo struct {
 }
 
 type Query struct {
-}
-
-type Store struct {
-	ID         string    `json:"id"`
-	LastUpdate time.Time `json:"lastUpdate"`
 }
 
 type User struct {
