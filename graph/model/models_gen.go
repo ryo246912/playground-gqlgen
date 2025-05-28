@@ -10,9 +10,9 @@ type Address struct {
 	ID         string    `json:"ID"`
 	Address    string    `json:"address"`
 	Address2   *string   `json:"address2,omitempty"`
-	District   *string   `json:"District,omitempty"`
-	CityID     int32     `json:"CityID"`
-	PostalCode *string   `json:"PostalCode,omitempty"`
+	District   *string   `json:"district,omitempty"`
+	CityID     int32     `json:"cityID"`
+	PostalCode *string   `json:"postalCode,omitempty"`
 	LastUpdate time.Time `json:"lastUpdate"`
 }
 
@@ -25,6 +25,15 @@ type NewTodo struct {
 }
 
 type Query struct {
+}
+
+type Staff struct {
+	FirstName  string    `json:"firstName"`
+	LastName   string    `json:"lastName"`
+	Email      *string   `json:"email,omitempty"`
+	Active     bool      `json:"active"`
+	UserName   string    `json:"userName"`
+	LastUpdate time.Time `json:"lastUpdate"`
 }
 
 type User struct {

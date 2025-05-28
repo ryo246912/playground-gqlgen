@@ -171,3 +171,5 @@ models:
     fields:
       address:
         resolver: true
+      managerStaffs:
+        resolver: true

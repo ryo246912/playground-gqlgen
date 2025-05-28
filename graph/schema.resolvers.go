@@ -80,6 +80,31 @@ func (r *queryResolver) Customers(ctx context.Context) ([]*model.Customer, error
 	return res, nil
 }
 
+// ManagerStaffs is the resolver for the managerStaffs field.
+func (r *storeResolver) ManagerStaffs(ctx context.Context, obj *model.Store) ([]*model.Staff, error) {
+	var staffs []models.Staff
+
+	err := r.DB.NewSelect().Model(&staffs).Where("store_id = ?", obj.ID).Scan(ctx)
+	if err != nil {
+		log.Println("error!", err)
+		return nil, err
+	}
+
+	res := make([]*model.Staff, len(staffs))
+	for i, s := range staffs {
+		res[i] = &model.Staff{
+			FirstName:  s.FirstName,
+			LastName:   s.LastName,
+			Email:      nullStringToPtr(s.Email),
+			Active:     s.Active,
+			UserName:   s.Username,
+			LastUpdate: s.LastUpdate,
+		}
+	}
+
+	return res, nil
+}
+
 // Address is the resolver for the address field.
 func (r *storeResolver) Address(ctx context.Context, obj *model.Store) (*model.Address, error) {
 	var address models.Address

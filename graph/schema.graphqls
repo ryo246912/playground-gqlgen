@@ -11,17 +11,28 @@ type Customer {
   store: Store
 }
 
+type Staff {
+  firstName: String!
+  lastName: String!
+  email: String
+  active: Boolean!
+  userName: String!
+  lastUpdate: DateTime!
+}
+
 type Address {
   ID: String!
   address: String!
   address2: String
-  District: String
-  CityID: Int!
-  PostalCode: String
+  district: String
+  cityID: Int!
+  postalCode: String
   lastUpdate: DateTime!
 }
+
 type Store {
   id: ID!
+  managerStaffs: [Staff!]!
   lastUpdate: DateTime!
   address: Address
 }
