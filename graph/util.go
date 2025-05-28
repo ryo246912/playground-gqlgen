@@ -1,6 +1,9 @@
 package graph
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 func nullStringToPtr(ns sql.NullString) *string {
 	if ns.Valid {
@@ -13,4 +16,11 @@ func stringToPtr(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func nullTimeToPtr(nt sql.NullTime) *time.Time {
+	if nt.Valid {
+		return &nt.Time
+	}
+	return nil
 }

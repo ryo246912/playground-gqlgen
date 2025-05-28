@@ -70,10 +70,14 @@ func (r *queryResolver) Customers(ctx context.Context) ([]*model.Customer, error
 	res := make([]*model.Customer, len(customers))
 	for i, c := range customers {
 		res[i] = &model.Customer{
-			ID:        fmt.Sprint(c.CustomerID),
-			FirstName: c.FirstName,
-			LastName:  c.LastName,
-			StoreID:   fmt.Sprint(c.StoreID),
+			ID:         fmt.Sprint(c.CustomerID),
+			FirstName:  c.FirstName,
+			LastName:   c.LastName,
+			Email:      *nullStringToPtr(c.Email),
+			Active:     c.Active,
+			CreateDate: c.CreateDate,
+			LastUpdate: nullTimeToPtr(c.LastUpdate),
+			StoreID:    fmt.Sprint(c.StoreID),
 		}
 	}
 

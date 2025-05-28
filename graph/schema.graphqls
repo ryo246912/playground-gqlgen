@@ -8,6 +8,10 @@ type Customer {
   id: ID!
   firstName: String!
   lastName: String!
+  email: String
+  active: Boolean!
+  createDate: DateTime!
+  lastUpdate: DateTime
   store: Store
 }
 
