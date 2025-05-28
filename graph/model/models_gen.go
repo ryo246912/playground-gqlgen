@@ -2,6 +2,17 @@
 
 package model
 
+import (
+	"time"
+)
+
+type Customer struct {
+	ID        string `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Store     *Store `json:"store,omitempty"`
+}
+
 type Mutation struct {
 }
 
@@ -11,6 +22,11 @@ type NewTodo struct {
 }
 
 type Query struct {
+}
+
+type Store struct {
+	ID         string    `json:"id"`
+	LastUpdate time.Time `json:"lastUpdate"`
 }
 
 type User struct {

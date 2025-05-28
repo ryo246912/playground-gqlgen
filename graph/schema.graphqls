@@ -2,6 +2,20 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar DateTime
+
+type Customer {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  store: Store
+}
+
+type Store {
+  id: ID!
+  lastUpdate: DateTime!
+}
+
 type Todo {
   id: ID!
   text: String!
@@ -16,6 +30,7 @@ type User {
 
 type Query {
   todos: [Todo!]!
+  customers: [Customer!]!
 }
 
 input NewTodo {
