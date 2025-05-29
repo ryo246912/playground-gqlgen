@@ -10,10 +10,25 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"strings"
 
 	"github.com/ryo246912/playground-gqlgen/graph/model"
 	"github.com/ryo246912/playground-gqlgen/graph/models"
 )
+
+// Email is the resolver for the email field.
+func (r *customerResolver) Email(ctx context.Context, obj *model.Customer, mask *bool) (*string, error) {
+	if mask == nil || !*mask {
+		return &obj.Email, nil
+	}
+
+	if !strings.Contains(obj.Email, "SMITH") {
+		return &obj.Email, nil
+	}
+
+	str := strings.Repeat("*", len(obj.Email))
+	return &str, nil
+}
 
 // Store is the resolver for the store field.
 func (r *customerResolver) Store(ctx context.Context, obj *model.Customer) (*model.Store, error) {

@@ -165,6 +165,8 @@ models:
         resolver: true
   Customer:
     fields:
+      email:
+        resolver: true
       store:
         resolver: true
       address:
