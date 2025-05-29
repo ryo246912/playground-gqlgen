@@ -63,6 +63,7 @@ type ComplexityRoot struct {
 
 	Customer struct {
 		Active     func(childComplexity int) int
+		Address    func(childComplexity int) int
 		CreateDate func(childComplexity int) int
 		Email      func(childComplexity int) int
 		FirstName  func(childComplexity int) int
@@ -112,6 +113,7 @@ type ComplexityRoot struct {
 
 type CustomerResolver interface {
 	Store(ctx context.Context, obj *model.Customer) (*model.Store, error)
+	Address(ctx context.Context, obj *model.Customer) (*model.Address, error)
 }
 type MutationResolver interface {
 	CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error)
@@ -203,6 +205,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Customer.Active(childComplexity), true
+
+	case "Customer.address":
+		if e.complexity.Customer.Address == nil {
+			break
+		}
+
+		return e.complexity.Customer.Address(childComplexity), true
 
 	case "Customer.createDate":
 		if e.complexity.Customer.CreateDate == nil {
@@ -1314,6 +1323,63 @@ func (ec *executionContext) fieldContext_Customer_store(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Customer_address(ctx context.Context, field graphql.CollectedField, obj *model.Customer) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Customer_address(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Customer().Address(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Address)
+	fc.Result = res
+	return ec.marshalOAddress2ᚖgithubᚗcomᚋryo246912ᚋplaygroundᚑgqlgenᚋgraphᚋmodelᚐAddress(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Customer_address(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Customer",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "ID":
+				return ec.fieldContext_Address_ID(ctx, field)
+			case "address":
+				return ec.fieldContext_Address_address(ctx, field)
+			case "address2":
+				return ec.fieldContext_Address_address2(ctx, field)
+			case "district":
+				return ec.fieldContext_Address_district(ctx, field)
+			case "cityID":
+				return ec.fieldContext_Address_cityID(ctx, field)
+			case "postalCode":
+				return ec.fieldContext_Address_postalCode(ctx, field)
+			case "lastUpdate":
+				return ec.fieldContext_Address_lastUpdate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Address", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createTodo(ctx, field)
 	if err != nil {
@@ -1488,6 +1554,8 @@ func (ec *executionContext) fieldContext_Query_customers(_ context.Context, fiel
 				return ec.fieldContext_Customer_lastUpdate(ctx, field)
 			case "store":
 				return ec.fieldContext_Customer_store(ctx, field)
+			case "address":
+				return ec.fieldContext_Customer_address(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
@@ -4463,6 +4531,39 @@ func (ec *executionContext) _Customer(ctx context.Context, sel ast.SelectionSet,
 					}
 				}()
 				res = ec._Customer_store(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "address":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Customer_address(ctx, field, obj)
 				return res
 			}
 

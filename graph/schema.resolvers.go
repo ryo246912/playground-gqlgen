@@ -32,6 +32,27 @@ func (r *customerResolver) Store(ctx context.Context, obj *model.Customer) (*mod
 	}, nil
 }
 
+// Address is the resolver for the address field.
+func (r *customerResolver) Address(ctx context.Context, obj *model.Customer) (*model.Address, error) {
+	var address models.Address
+
+	err := r.DB.NewSelect().Model(&address).Where("address_id = ?", obj.AddressID).Scan(ctx)
+	if err != nil {
+		log.Println("error!", err)
+		return nil, err
+	}
+
+	return &model.Address{
+		ID:         fmt.Sprint(address.AddressID),
+		Address:    address.Address,
+		Address2:   nullStringToPtr(address.Address2),
+		District:   stringToPtr(address.District),
+		CityID:     int32(address.CityID),
+		PostalCode: nullStringToPtr(address.PostalCode),
+		LastUpdate: address.LastUpdate,
+	}, nil
+}
+
 // CreateTodo is the resolver for the createTodo field.
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
 	randNumber, _ := rand.Int(rand.Reader, big.NewInt(100))
@@ -78,6 +99,7 @@ func (r *queryResolver) Customers(ctx context.Context) ([]*model.Customer, error
 			CreateDate: c.CreateDate,
 			LastUpdate: nullTimeToPtr(c.LastUpdate),
 			StoreID:    fmt.Sprint(c.StoreID),
+			AddressID:  fmt.Sprint(c.AddressID),
 		}
 	}
 

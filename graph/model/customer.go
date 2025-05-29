@@ -12,4 +12,6 @@ type Customer struct {
 	LastUpdate *time.Time `json:"last_update,omitempty"`
 	Store      *Store     `json:"store,omitempty"`
 	StoreID    string     `json:"storeId,omitempty"`
+	Address    *Address   `json:"address,omitempty"`
+	AddressID  string     `json:"addressId,omitempty"`
 }

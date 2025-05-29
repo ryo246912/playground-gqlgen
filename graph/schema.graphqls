@@ -13,6 +13,7 @@ type Customer {
   createDate: DateTime!
   lastUpdate: DateTime
   store: Store
+  address: Address
 }
 
 type Staff {

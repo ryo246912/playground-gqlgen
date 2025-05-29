@@ -167,6 +167,8 @@ models:
     fields:
       store:
         resolver: true
+      address:
+        resolver: true
   Store:
     fields:
       address:
