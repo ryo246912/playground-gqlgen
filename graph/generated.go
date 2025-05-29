@@ -78,7 +78,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Customers func(childComplexity int) int
+		Customers func(childComplexity int, limit *int32) int
 		Todos     func(childComplexity int) int
 	}
 
@@ -120,7 +120,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Todos(ctx context.Context) ([]*model.Todo, error)
-	Customers(ctx context.Context) ([]*model.Customer, error)
+	Customers(ctx context.Context, limit *int32) ([]*model.Customer, error)
 }
 type StoreResolver interface {
 	ManagerStaffs(ctx context.Context, obj *model.Store) ([]*model.Staff, error)
@@ -279,7 +279,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			break
 		}
 
-		return e.complexity.Query.Customers(childComplexity), true
+		args, err := ec.field_Query_customers_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Customers(childComplexity, args["limit"].(*int32)), true
 
 	case "Query.todos":
 		if e.complexity.Query.Todos == nil {
@@ -568,6 +573,29 @@ func (ec *executionContext) field_Query___type_argsName(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_customers_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_customers_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_customers_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int32, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint32(ctx, tmp)
+	}
+
+	var zeroVal *int32
 	return zeroVal, nil
 }
 
@@ -1513,7 +1541,7 @@ func (ec *executionContext) _Query_customers(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Customers(rctx)
+		return ec.resolvers.Query().Customers(rctx, fc.Args["limit"].(*int32))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1530,7 +1558,7 @@ func (ec *executionContext) _Query_customers(ctx context.Context, field graphql.
 	return ec.marshalNCustomer2ᚕᚖgithubᚗcomᚋryo246912ᚋplaygroundᚑgqlgenᚋgraphᚋmodelᚐCustomerᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_customers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_customers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1559,6 +1587,17 @@ func (ec *executionContext) fieldContext_Query_customers(_ context.Context, fiel
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_customers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -5948,6 +5987,22 @@ func (ec *executionContext) marshalODateTime2ᚖtimeᚐTime(ctx context.Context,
 		return graphql.Null
 	}
 	res := graphql.MarshalTime(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint32(ctx context.Context, v any) (*int32, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt32(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint32(ctx context.Context, sel ast.SelectionSet, v *int32) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt32(*v)
 	return res
 }
 

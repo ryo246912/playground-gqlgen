@@ -56,7 +56,7 @@ type User {
 
 type Query {
   todos: [Todo!]!
-  customers: [Customer!]!
+  customers(limit: Int = 10): [Customer!]!
 }
 
 input NewTodo {

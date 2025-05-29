@@ -79,10 +79,15 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 }
 
 // Customers is the resolver for the customers field.
-func (r *queryResolver) Customers(ctx context.Context) ([]*model.Customer, error) {
+func (r *queryResolver) Customers(ctx context.Context, limit *int32) ([]*model.Customer, error) {
 	var customers []models.Customer
 
-	err := r.DB.NewSelect().Model(&customers).OrderExpr("customer_id ASC").Limit(10).Scan(ctx)
+	if limit == nil {
+		defaultLimit := int32(10)
+		limit = &defaultLimit
+	}
+
+	err := r.DB.NewSelect().Model(&customers).OrderExpr("customer_id ASC").Limit(int(*limit)).Scan(ctx)
 	if err != nil {
 		log.Println("error!!", err)
 		return nil, err
