@@ -19,6 +19,13 @@ type Address struct {
 type Mutation struct {
 }
 
+type NewCustomer struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	StoreID   int32  `json:"storeID"`
+}
+
 type NewTodo struct {
 	Text   string `json:"text"`
 	UserID string `json:"userId"`

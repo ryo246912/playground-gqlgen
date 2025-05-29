@@ -64,6 +64,14 @@ input NewTodo {
   userId: String!
 }
 
+input NewCustomer {
+  firstName: String!
+  lastName: String!
+  email: String!
+  storeID: Int!
+}
+
 type Mutation {
   createTodo(input: NewTodo!): Todo!
+  createCustomer(input: NewCustomer!): Boolean
 }

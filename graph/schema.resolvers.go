@@ -7,10 +7,12 @@ package graph
 import (
 	"context"
 	"crypto/rand"
+	"database/sql"
 	"fmt"
 	"log"
 	"math/big"
 	"strings"
+	"time"
 
 	"github.com/ryo246912/playground-gqlgen/graph/model"
 	"github.com/ryo246912/playground-gqlgen/graph/models"
@@ -86,6 +88,30 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 
 	r.todos = append(r.todos, todo)
 	return todo, nil
+}
+
+// CreateCustomer is the resolver for the createCustomer field.
+func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.NewCustomer) (*bool, error) {
+
+	_, err := r.DB.NewInsert().Model(&models.Customer{
+		FirstName:  input.FirstName,
+		LastName:   input.LastName,
+		Email:      sql.NullString{String: input.Email, Valid: input.Email != ""},
+		Active:     true,
+		CreateDate: time.Now(),
+		LastUpdate: sql.NullTime{Time: time.Now(), Valid: true},
+		StoreID:    uint8(input.StoreID),
+		// 仮でベタ打ち
+		AddressID: 605,
+	}).Exec(ctx)
+
+	if err != nil {
+		log.Println("error!!", err)
+		return nil, err
+	}
+
+	result := true
+	return &result, nil
 }
 
 // Todos is the resolver for the todos field.
