@@ -21,16 +21,21 @@ type Loaders struct {
 	// *dataloadgen.Loader[K, V]を設定
 	// K = 検索条件となるkeyの型
 	// V = 検索結果の型
-	StoreLoader *dataloadgen.Loader[string, *db.Store]
+	StoreLoader   *dataloadgen.Loader[string, *db.Store]
+	AddressLoader *dataloadgen.Loader[string, *db.Address]
+	StaffLoader   *dataloadgen.Loader[string, *db.Staff]
 }
 
 // NewLoaders instantiates data loaders for the middleware
 func NewLoaders(conn *bun.DB) *Loaders {
 	// define the data loader
-	// ur := &userReader{db: conn}
 	sr := &storeReader{db: conn}
+	adr := &addressReader{db: conn}
+	sfr := &staffReader{db: conn}
 	return &Loaders{
-		StoreLoader: dataloadgen.NewLoader(sr.getStores, dataloadgen.WithWait(time.Millisecond)),
+		StoreLoader:   dataloadgen.NewLoader(sr.getStores, dataloadgen.WithWait(time.Millisecond)),
+		AddressLoader: dataloadgen.NewLoader(adr.getAddress, dataloadgen.WithWait(time.Millisecond)),
+		StaffLoader:   dataloadgen.NewLoader(sfr.getStaffs, dataloadgen.WithWait(time.Millisecond)),
 	}
 }
 

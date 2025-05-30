@@ -44,17 +44,17 @@ func (r *customerResolver) Store(ctx context.Context, obj *model.Customer) (*mod
 	}
 
 	return &model.Store{
-		ID:         fmt.Sprint(store.StoreID),
-		LastUpdate: store.LastUpdate,
-		AddressID:  fmt.Sprint(store.AddressID),
+		ID:             fmt.Sprint(store.StoreID),
+		LastUpdate:     store.LastUpdate,
+		AddressID:      fmt.Sprint(store.AddressID),
+		ManagerStaffID: fmt.Sprint(store.ManagerStaffID),
 	}, nil
 }
 
 // Address is the resolver for the address field.
 func (r *customerResolver) Address(ctx context.Context, obj *model.Customer) (*model.Address, error) {
-	var address db.Address
+	address, err := dataloader.GetAddress(ctx, obj.AddressID)
 
-	err := r.DB.NewSelect().Model(&address).Where("address_id = ?", obj.AddressID).Scan(ctx)
 	if err != nil {
 		log.Println("error!", err)
 		return nil, err
@@ -154,9 +154,7 @@ func (r *queryResolver) Customers(ctx context.Context, limit *int32) ([]*model.C
 
 // ManagerStaffs is the resolver for the managerStaffs field.
 func (r *storeResolver) ManagerStaffs(ctx context.Context, obj *model.Store) ([]*model.Staff, error) {
-	var staffs []db.Staff
-
-	err := r.DB.NewSelect().Model(&staffs).Where("store_id = ?", obj.ID).Scan(ctx)
+	staffs, err := dataloader.GetStaffs(ctx, []string{obj.ID})
 	if err != nil {
 		log.Println("error!", err)
 		return nil, err
@@ -179,9 +177,8 @@ func (r *storeResolver) ManagerStaffs(ctx context.Context, obj *model.Store) ([]
 
 // Address is the resolver for the address field.
 func (r *storeResolver) Address(ctx context.Context, obj *model.Store) (*model.Address, error) {
-	var address db.Address
+	address, err := dataloader.GetAddress(ctx, obj.AddressID)
 
-	err := r.DB.NewSelect().Model(&address).Where("address_id = ?", obj.AddressID).Scan(ctx)
 	if err != nil {
 		log.Println("error!", err)
 		return nil, err
