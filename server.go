@@ -52,7 +52,7 @@ func main() {
 		bundebug.FromEnv("BUNDEBUG"),
 	))
 
-	h := handler.New(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{DB: db}}))
+	h := handler.New(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{DB: db}, Directives: graph.Directive}))
 
 	h.AddTransport(transport.POST{})
 	h.AddTransport(transport.Options{})

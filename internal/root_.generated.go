@@ -41,6 +41,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	IsAuthenticated func(ctx context.Context, obj any, next graphql.Resolver) (res any, err error)
 }
 
 type ComplexityRoot struct {
@@ -509,6 +510,8 @@ var sources = []*ast.Source{
 
 scalar DateTime
 
+directive @isAuthenticated on FIELD_DEFINITION
+
 type Customer {
   id: ID!
   firstName: String!
@@ -524,7 +527,7 @@ type Customer {
 type Staff {
   firstName: String!
   lastName: String!
-  email: String
+  email: String @isAuthenticated
   active: Boolean!
   userName: String!
   lastUpdate: DateTime!

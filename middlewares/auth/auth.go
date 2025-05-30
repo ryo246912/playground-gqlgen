@@ -46,3 +46,11 @@ func validateToken(token string) (string, error) {
 	}
 	return tUserName, nil
 }
+
+func GetUserName(ctx context.Context) (string, error) {
+	userName, ok := ctx.Value(userNameKey{}).(string)
+	if !ok || userName != "admin" {
+		return "", errors.New("user not authenticated")
+	}
+	return userName, nil
+}

@@ -4,6 +4,8 @@
 
 scalar DateTime
 
+directive @isAuthenticated on FIELD_DEFINITION
+
 type Customer {
   id: ID!
   firstName: String!
@@ -19,7 +21,7 @@ type Customer {
 type Staff {
   firstName: String!
   lastName: String!
-  email: String
+  email: String @isAuthenticated
   active: Boolean!
   userName: String!
   lastUpdate: DateTime!
