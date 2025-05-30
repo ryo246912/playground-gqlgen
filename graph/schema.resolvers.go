@@ -6,16 +6,11 @@ package graph
 
 import (
 	"context"
-	"crypto/rand"
-	"database/sql"
 	"fmt"
 	"log"
-	"math/big"
 	"strings"
-	"time"
 
 	"github.com/ryo246912/playground-gqlgen/graph/dataloader"
-	"github.com/ryo246912/playground-gqlgen/graph/db"
 	"github.com/ryo246912/playground-gqlgen/graph/model"
 	"github.com/ryo246912/playground-gqlgen/internal"
 )
@@ -71,87 +66,6 @@ func (r *customerResolver) Address(ctx context.Context, obj *model.Customer) (*m
 	}, nil
 }
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	randNumber, _ := rand.Int(rand.Reader, big.NewInt(100))
-
-	// todo := &model.Todo{
-	// 	Text: input.Text,
-	// 	ID:   fmt.Sprintf("T%d", randNumber),
-	// 	User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
-	// }
-	// NOTE:userIDをresolveする
-	todo := &model.Todo{
-		Text:   input.Text,
-		ID:     fmt.Sprintf("T%d", randNumber),
-		UserID: input.UserID,
-	}
-
-	r.todos = append(r.todos, todo)
-	return todo, nil
-}
-
-// CreateCustomer is the resolver for the createCustomer field.
-func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.NewCustomer) (*bool, error) {
-	_, err := r.DB.NewInsert().Model(&db.Customer{
-		FirstName:  input.FirstName,
-		LastName:   input.LastName,
-		Email:      sql.NullString{String: input.Email, Valid: input.Email != ""},
-		Active:     true,
-		CreateDate: time.Now(),
-		LastUpdate: sql.NullTime{Time: time.Now(), Valid: true},
-		StoreID:    uint8(input.StoreID),
-		// 仮でベタ打ち
-		AddressID: 605,
-	}).Exec(ctx)
-
-	if err != nil {
-		log.Println("error!!", err)
-		return nil, err
-	}
-
-	result := true
-	return &result, nil
-}
-
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return r.todos, nil
-}
-
-// Customers is the resolver for the customers field.
-func (r *queryResolver) Customers(ctx context.Context, limit *int32) ([]*model.Customer, error) {
-	var customers []db.Customer
-
-	if limit == nil {
-		defaultLimit := int32(10)
-		limit = &defaultLimit
-	}
-
-	err := r.DB.NewSelect().Model(&customers).OrderExpr("customer_id ASC").Limit(int(*limit)).Scan(ctx)
-	if err != nil {
-		log.Println("error!!", err)
-		return nil, err
-	}
-
-	res := make([]*model.Customer, len(customers))
-	for i, c := range customers {
-		res[i] = &model.Customer{
-			ID:         fmt.Sprint(c.CustomerID),
-			FirstName:  c.FirstName,
-			LastName:   c.LastName,
-			Email:      *nullStringToPtr(c.Email),
-			Active:     c.Active,
-			CreateDate: c.CreateDate,
-			LastUpdate: nullTimeToPtr(c.LastUpdate),
-			StoreID:    fmt.Sprint(c.StoreID),
-			AddressID:  fmt.Sprint(c.AddressID),
-		}
-	}
-
-	return res, nil
-}
-
 // ManagerStaffs is the resolver for the managerStaffs field.
 func (r *storeResolver) ManagerStaffs(ctx context.Context, obj *model.Store) ([]*model.Staff, error) {
 	staffs, err := dataloader.GetStaffs(ctx, []string{obj.ID})
@@ -204,12 +118,6 @@ func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, 
 // Customer returns internal.CustomerResolver implementation.
 func (r *Resolver) Customer() internal.CustomerResolver { return &customerResolver{r} }
 
-// Mutation returns internal.MutationResolver implementation.
-func (r *Resolver) Mutation() internal.MutationResolver { return &mutationResolver{r} }
-
-// Query returns internal.QueryResolver implementation.
-func (r *Resolver) Query() internal.QueryResolver { return &queryResolver{r} }
-
 // Store returns internal.StoreResolver implementation.
 func (r *Resolver) Store() internal.StoreResolver { return &storeResolver{r} }
 
@@ -217,7 +125,5 @@ func (r *Resolver) Store() internal.StoreResolver { return &storeResolver{r} }
 func (r *Resolver) Todo() internal.TodoResolver { return &todoResolver{r} }
 
 type customerResolver struct{ *Resolver }
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
 type storeResolver struct{ *Resolver }
 type todoResolver struct{ *Resolver }

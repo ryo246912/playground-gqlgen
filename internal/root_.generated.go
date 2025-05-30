@@ -504,7 +504,19 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../graph/schema.graphqls", Input: `# GraphQL schema example
+	{Name: "../graph/schema/mutation.graphqls", Input: `
+type Mutation {
+  createTodo(input: NewTodo!): Todo!
+  createCustomer(input: NewCustomer!): Boolean
+}
+`, BuiltIn: false},
+	{Name: "../graph/schema/query.graphqls", Input: `
+type Query {
+  todos: [Todo!]!
+  customers(limit: Int = 10): [Customer!]!
+}
+`, BuiltIn: false},
+	{Name: "../graph/schema/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -562,11 +574,6 @@ type User {
   name: String!
 }
 
-type Query {
-  todos: [Todo!]!
-  customers(limit: Int = 10): [Customer!]!
-}
-
 input NewTodo {
   text: String!
   userId: String!
@@ -577,11 +584,6 @@ input NewCustomer {
   lastName: String!
   email: String!
   storeID: Int!
-}
-
-type Mutation {
-  createTodo(input: NewTodo!): Todo!
-  createCustomer(input: NewCustomer!): Boolean
 }
 `, BuiltIn: false},
 }

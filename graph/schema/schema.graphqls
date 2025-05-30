@@ -1,0 +1,69 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar DateTime
+
+directive @isAuthenticated on FIELD_DEFINITION
+
+type Customer {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email(mask: Boolean): String
+  active: Boolean!
+  createDate: DateTime!
+  lastUpdate: DateTime
+  store: Store
+  address: Address
+}
+
+type Staff {
+  firstName: String!
+  lastName: String!
+  email: String @isAuthenticated
+  active: Boolean!
+  userName: String!
+  lastUpdate: DateTime!
+}
+
+type Address {
+  ID: String!
+  address: String!
+  address2: String
+  district: String
+  cityID: Int!
+  postalCode: String
+  lastUpdate: DateTime!
+}
+
+type Store {
+  id: ID!
+  managerStaffs: [Staff!]!
+  lastUpdate: DateTime!
+  address: Address
+}
+
+type Todo {
+  id: ID!
+  text: String!
+  done: Boolean!
+  user: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+}
+
+input NewTodo {
+  text: String!
+  userId: String!
+}
+
+input NewCustomer {
+  firstName: String!
+  lastName: String!
+  email: String!
+  storeID: Int!
+}

@@ -1,0 +1,5 @@
+
+type Query {
+  todos: [Todo!]!
+  customers(limit: Int = 10): [Customer!]!
+}
