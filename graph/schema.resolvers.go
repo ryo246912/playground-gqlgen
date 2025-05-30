@@ -17,6 +17,7 @@ import (
 	"github.com/ryo246912/playground-gqlgen/graph/dataloader"
 	"github.com/ryo246912/playground-gqlgen/graph/db"
 	"github.com/ryo246912/playground-gqlgen/graph/model"
+	"github.com/ryo246912/playground-gqlgen/internal"
 )
 
 // Email is the resolver for the email field.
@@ -92,7 +93,6 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 
 // CreateCustomer is the resolver for the createCustomer field.
 func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.NewCustomer) (*bool, error) {
-
 	_, err := r.DB.NewInsert().Model(&db.Customer{
 		FirstName:  input.FirstName,
 		LastName:   input.LastName,
@@ -204,20 +204,20 @@ func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, 
 	return &model.User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
 }
 
-// Customer returns CustomerResolver implementation.
-func (r *Resolver) Customer() CustomerResolver { return &customerResolver{r} }
+// Customer returns internal.CustomerResolver implementation.
+func (r *Resolver) Customer() internal.CustomerResolver { return &customerResolver{r} }
 
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+// Mutation returns internal.MutationResolver implementation.
+func (r *Resolver) Mutation() internal.MutationResolver { return &mutationResolver{r} }
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+// Query returns internal.QueryResolver implementation.
+func (r *Resolver) Query() internal.QueryResolver { return &queryResolver{r} }
 
-// Store returns StoreResolver implementation.
-func (r *Resolver) Store() StoreResolver { return &storeResolver{r} }
+// Store returns internal.StoreResolver implementation.
+func (r *Resolver) Store() internal.StoreResolver { return &storeResolver{r} }
 
-// Todo returns TodoResolver implementation.
-func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
+// Todo returns internal.TodoResolver implementation.
+func (r *Resolver) Todo() internal.TodoResolver { return &todoResolver{r} }
 
 type customerResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }

@@ -15,6 +15,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/ryo246912/playground-gqlgen/graph"
 	"github.com/ryo246912/playground-gqlgen/graph/dataloader"
+	"github.com/ryo246912/playground-gqlgen/internal"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/mysqldialect"
 	"github.com/uptrace/bun/extra/bundebug"
@@ -50,7 +51,8 @@ func main() {
 		bundebug.FromEnv("BUNDEBUG"),
 	))
 
-	h := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: db}}))
+	h := handler.New(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{DB: db}}))
+
 	h.AddTransport(transport.POST{})
 	h.AddTransport(transport.Options{})
 	h.AddTransport(transport.GET{})
