@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ryo246912/playground-gqlgen/graph/dataloader"
 	"github.com/ryo246912/playground-gqlgen/graph/model"
 	"github.com/ryo246912/playground-gqlgen/graph/models"
 )
@@ -34,9 +35,8 @@ func (r *customerResolver) Email(ctx context.Context, obj *model.Customer, mask 
 
 // Store is the resolver for the store field.
 func (r *customerResolver) Store(ctx context.Context, obj *model.Customer) (*model.Store, error) {
-	var store models.Store
+	store, err := dataloader.GetStore(ctx, obj.StoreID)
 
-	err := r.DB.NewSelect().Model(&store).Where("store_id = ?", obj.StoreID).Scan(ctx)
 	if err != nil {
 		log.Print("error!", err)
 		return nil, err
