@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ryo246912/playground-gqlgen/graph/models"
+	"github.com/ryo246912/playground-gqlgen/graph/db"
 	"github.com/uptrace/bun"
 	"github.com/vikstrous/dataloadgen"
 )
@@ -21,7 +21,7 @@ type Loaders struct {
 	// *dataloadgen.Loader[K, V]を設定
 	// K = 検索条件となるkeyの型
 	// V = 検索結果の型
-	StoreLoader *dataloadgen.Loader[string, *models.Store]
+	StoreLoader *dataloadgen.Loader[string, *db.Store]
 }
 
 // NewLoaders instantiates data loaders for the middleware

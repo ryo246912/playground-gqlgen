@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/ryo246912/playground-gqlgen/graph/dataloader"
+	"github.com/ryo246912/playground-gqlgen/graph/db"
 	"github.com/ryo246912/playground-gqlgen/graph/model"
-	"github.com/ryo246912/playground-gqlgen/graph/models"
 )
 
 // Email is the resolver for the email field.
@@ -51,7 +51,7 @@ func (r *customerResolver) Store(ctx context.Context, obj *model.Customer) (*mod
 
 // Address is the resolver for the address field.
 func (r *customerResolver) Address(ctx context.Context, obj *model.Customer) (*model.Address, error) {
-	var address models.Address
+	var address db.Address
 
 	err := r.DB.NewSelect().Model(&address).Where("address_id = ?", obj.AddressID).Scan(ctx)
 	if err != nil {
@@ -93,7 +93,7 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 // CreateCustomer is the resolver for the createCustomer field.
 func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.NewCustomer) (*bool, error) {
 
-	_, err := r.DB.NewInsert().Model(&models.Customer{
+	_, err := r.DB.NewInsert().Model(&db.Customer{
 		FirstName:  input.FirstName,
 		LastName:   input.LastName,
 		Email:      sql.NullString{String: input.Email, Valid: input.Email != ""},
@@ -121,7 +121,7 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 
 // Customers is the resolver for the customers field.
 func (r *queryResolver) Customers(ctx context.Context, limit *int32) ([]*model.Customer, error) {
-	var customers []models.Customer
+	var customers []db.Customer
 
 	if limit == nil {
 		defaultLimit := int32(10)
@@ -154,7 +154,7 @@ func (r *queryResolver) Customers(ctx context.Context, limit *int32) ([]*model.C
 
 // ManagerStaffs is the resolver for the managerStaffs field.
 func (r *storeResolver) ManagerStaffs(ctx context.Context, obj *model.Store) ([]*model.Staff, error) {
-	var staffs []models.Staff
+	var staffs []db.Staff
 
 	err := r.DB.NewSelect().Model(&staffs).Where("store_id = ?", obj.ID).Scan(ctx)
 	if err != nil {
@@ -179,7 +179,7 @@ func (r *storeResolver) ManagerStaffs(ctx context.Context, obj *model.Store) ([]
 
 // Address is the resolver for the address field.
 func (r *storeResolver) Address(ctx context.Context, obj *model.Store) (*model.Address, error) {
-	var address models.Address
+	var address db.Address
 
 	err := r.DB.NewSelect().Model(&address).Where("address_id = ?", obj.AddressID).Scan(ctx)
 	if err != nil {
