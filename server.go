@@ -16,6 +16,7 @@ import (
 	"github.com/ryo246912/playground-gqlgen/graph"
 	"github.com/ryo246912/playground-gqlgen/graph/dataloader"
 	"github.com/ryo246912/playground-gqlgen/internal"
+	"github.com/ryo246912/playground-gqlgen/middlewares/auth"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/mysqldialect"
 	"github.com/uptrace/bun/extra/bundebug"
@@ -68,7 +69,7 @@ func main() {
 	srv := dataloader.Middleware(db, h)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", auth.AuthMiddleware(srv))
 
 	port := os.Getenv("PORT")
 	if port == "" {
